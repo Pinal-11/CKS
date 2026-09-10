@@ -1,0 +1,94 @@
+User management:
+
+# Create a user (default: creates home dir, adds to /etc/passwd, /etc/shadow, /etc/group)
+useradd username
+
+# Create user with specific options (common in exam scenarios)
+useradd -m -d /home/username -s /bin/bash -c "comment" username
+# -m : create home directory
+# -d : specify home directory path
+# -s : specify login shell
+# -c : comment/full name
+
+# Create user with a specific UID
+useradd -u 1500 username
+
+# Set/change password for a user
+passwd username
+# then enter new password twice (interactive)
+
+# Set password non-interactively (useful in scripts)
+echo "username:password" | chpasswd
+
+# Modify an existing user
+usermod -l newname oldname        # rename login
+usermod -d /new/home -m username  # change home dir (and move contents)
+usermod -s /bin/sh username       # change shell
+usermod -aG groupname username    # ADD to a supplementary group (-a = append, IMPORTANT: without -a it replaces all groups)
+usermod -L username               # lock account (disable password login)
+usermod -U username               # unlock account
+
+# Delete a user
+userdel username
+userdel -r username     # also remove home directory and mail spool
+
+# Check user info
+id username
+id -Gn username     # show group names user belongs to
+
+-------------------------------------------------------------
+
+Group Management
+
+# Create a group
+groupadd groupname
+
+# Create group with specific GID
+groupadd -g 2000 groupname
+
+# Add existing user to a group (secondary/supplementary)
+usermod -aG groupname username
+# OR
+gpasswd -a username groupname
+
+# Remove user from a group
+gpasswd -d username groupname
+
+# Delete a group
+groupdel groupname
+
+# Change group name/GID
+groupmod -n newname oldname
+groupmod -g newgid groupname
+
+# List members of a group
+getent group groupname
+
+--------------------------------------------------------
+
+Password / Account Info
+
+# View password aging/expiry info
+chage -l username
+
+# Force password expiry (user must change at next login)
+chage -d 0 username
+
+# Set account expiry date
+chage -E 2026-12-31 username
+
+# Check password file entries directly
+cat /etc/passwd | grep username
+cat /etc/shadow | grep username     # requires root
+getent passwd username
+
+----------------------------------
+
+Quick Reference Table (files touched)
+File	            Purpose
+/etc/passwd	      user account info (uid, gid, home, shell)
+/etc/shadow	      encrypted passwords, expiry
+/etc/group	      group definitions
+/etc/gshadow	    secure group info
+/etc/login.defs	  default settings (UID/GID ranges etc.)
+/etc/skel/	      template files copied to new home dirs
