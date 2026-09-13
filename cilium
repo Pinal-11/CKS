@@ -1,0 +1,30 @@
+# Cilium
+
+Cilium is an open source software for providing and securing network connectivity between container applications
+
+Architeture:
+
+![alt text](SS/image.png)
+
+---
+
+## Cilium.yaml
+
+```yaml
+apiVersion: cilium.io/v2 
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-encrypted-traffic
+spec:
+  endpointSelector:
+    matchLabels:
+      app: myapp
+  egress:
+  - toEndpoints:
+     - matchLabels:
+        app: myapp
+    toPorts:
+    - ports:
+      - port: "80"
+        protocol: TCP
+```

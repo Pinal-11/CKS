@@ -1,0 +1,19 @@
+FROM ubuntu:20.04
+RUN apt-get update && apt-get -y install curl
+ENV URL https://google.com/this-will-fail?secret-token=
+RUN rm /usr/bin/bash
+CMD ["sh", "-c", "curl --head $URL$TOKEN"]
+
+execution
+1. podman build -t app .
+2. podman run -d -e TOKEN=mldmlaefmlefmewlk app sleep 1d
+3. podman exec -it app(container Name/Id)  bash 
+4. podman exec -it app(container Name/Id)  sh # it will run successfully
+
+
+# Instruction 
+
+Use specific version 20.04 for the base image
+Remove layer caching issues with apt-get
+Remove the hardcoded secret value mldmlaefmlefmewlk . The secret value should be passed into the container during runtime as env variable TOKEN
+Make it impossible to podman exec , docker exec or kubectl exec into the container using bash
